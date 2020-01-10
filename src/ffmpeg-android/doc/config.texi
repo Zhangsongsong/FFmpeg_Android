@@ -70,9 +70,9 @@
 @c @set have-armv5te-external no
 @c @set have-armv6-external no
 @c @set have-armv6t2-external no
-@c @set have-armv8-external no
-@c @set have-neon-external no
-@c @set have-vfp-external no
+@set have-armv8-external yes
+@set have-neon-external yes
+@set have-vfp-external yes
 @c @set have-vfpv3-external no
 @c @set have-setend-external no
 @c @set have-altivec-external no
@@ -114,9 +114,9 @@
 @c @set have-armv5te-inline no
 @c @set have-armv6-inline no
 @c @set have-armv6t2-inline no
-@c @set have-armv8-inline no
-@c @set have-neon-inline no
-@c @set have-vfp-inline no
+@set have-armv8-inline yes
+@set have-neon-inline yes
+@set have-vfp-inline yes
 @c @set have-vfpv3-inline no
 @c @set have-setend-inline no
 @c @set have-altivec-inline no
@@ -159,9 +159,9 @@
 @c @set have-fast-64bit no
 @c @set have-fast-clz no
 @c @set have-fast-cmov no
-@set have-local-aligned-8 yes
-@set have-local-aligned-16 yes
-@set have-local-aligned-32 yes
+@c @set have-local-aligned-8 no
+@c @set have-local-aligned-16 no
+@c @set have-local-aligned-32 no
 @c @set have-simd-align-16 no
 @c @set have-simd-align-32 no
 @set have-atomics-gcc yes
@@ -170,7 +170,7 @@
 @c @set have-atomic-cas-ptr no
 @c @set have-machine-rw-barrier no
 @c @set have-memorybarrier no
-@set have-mm-empty yes
+@c @set have-mm-empty no
 @c @set have-rdtsc no
 @set have-sarestart yes
 @set have-sem-timedwait yes
@@ -325,12 +325,12 @@
 @c @set have-asm-mod-q no
 @set have-attribute-may-alias yes
 @set have-attribute-packed yes
-@set have-ebp-available yes
+@c @set have-ebp-available no
 @c @set have-ebx-available no
 @c @set have-gnu-as no
 @c @set have-gnu-windres no
 @c @set have-ibm-asm no
-@set have-inline-asm-direct-symbol-refs yes
+@c @set have-inline-asm-direct-symbol-refs no
 @set have-inline-asm-labels yes
 @set have-inline-asm-nonlocal-labels yes
 @set have-pragma-deprecated yes
@@ -339,7 +339,7 @@
 @set have-symver-gnu-asm yes
 @c @set have-vfp-args no
 @c @set have-xform-asm no
-@set have-xmm-clobbers yes
+@c @set have-xmm-clobbers no
 @c @set have-condition-variable-ptr no
 @set have-socklen-t yes
 @set have-struct-addrinfo yes
@@ -354,7 +354,7 @@
 @c @set have-struct-sockaddr-sa-len no
 @set have-struct-sockaddr-storage yes
 @c @set have-struct-stat-st-mtim-tv-nsec no
-@c @set have-struct-v4l2-frmivalenum-discrete no
+@set have-struct-v4l2-frmivalenum-discrete yes
 @set have-atomics-native yes
 @c @set have-dos-paths no
 @c @set have-dxva2-lib no
@@ -436,7 +436,7 @@
 @c @set config-libxvid no
 @c @set config-decklink no
 @c @set config-libfdk-aac no
-@set config-openssl yes
+@c @set config-openssl no
 @c @set config-gmp no
 @c @set config-libopencore-amrnb no
 @c @set config-libopencore-amrwb no
@@ -2210,7 +2210,7 @@
 @set config-concat-protocol yes
 @set config-crypto-protocol yes
 @set config-data-protocol yes
-@set config-ffrtmpcrypt-protocol yes
+@c @set config-ffrtmpcrypt-protocol no
 @set config-ffrtmphttp-protocol yes
 @set config-file-protocol yes
 @set config-ftp-protocol yes
@@ -2218,7 +2218,7 @@
 @set config-hls-protocol yes
 @set config-http-protocol yes
 @set config-httpproxy-protocol yes
-@set config-https-protocol yes
+@c @set config-https-protocol no
 @set config-icecast-protocol yes
 @set config-mmsh-protocol yes
 @set config-mmst-protocol yes
@@ -2226,11 +2226,11 @@
 @set config-pipe-protocol yes
 @set config-prompeg-protocol yes
 @set config-rtmp-protocol yes
-@set config-rtmpe-protocol yes
-@set config-rtmps-protocol yes
+@c @set config-rtmpe-protocol no
+@c @set config-rtmps-protocol no
 @set config-rtmpt-protocol yes
-@set config-rtmpte-protocol yes
-@set config-rtmpts-protocol yes
+@c @set config-rtmpte-protocol no
+@c @set config-rtmpts-protocol no
 @set config-rtp-protocol yes
 @c @set config-sctp-protocol no
 @set config-srtp-protocol yes
@@ -2240,7 +2240,7 @@
 @c @set config-tls-gnutls-protocol no
 @c @set config-tls-schannel-protocol no
 @c @set config-tls-securetransport-protocol no
-@set config-tls-openssl-protocol yes
+@c @set config-tls-openssl-protocol no
 @set config-udp-protocol yes
 @set config-udplite-protocol yes
 @set config-unix-protocol yes

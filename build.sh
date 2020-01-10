@@ -1,11 +1,11 @@
 #!/bin/sh
 
-export NDK=/Users/songzhouzhang/Library/Android/ndk/android-ndk-r14b
+export NDK=/Users/zasko/Zasko/Android/NDK/android-ndk-r14b
 export WORKING_DIR=`pwd`
 
-#TARGET_ARMEABI_DIR=$WORKING_DIR/armeabi
+TARGET_ARMEABI_DIR=$WORKING_DIR/armeabi
 # TARGET_ARMEABIV7A_DIR=$WORKING_DIR/armeabi-v7a
-TARGET_X86_DIR=$WORKING_DIR/x86
+# TARGET_X86_DIR=$WORKING_DIR/x86
 # TARGET_MIPS_DIR=$WORKING_DIR/mips
 # TARGET_X86_64_DIR=$WORKING_DIR/x86_64
 # TARGET_ARMEABI_64_DIR=$WORKING_DIR/arm64-v8a

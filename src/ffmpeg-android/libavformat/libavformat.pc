@@ -1,7 +1,7 @@
 prefix=/usr/local
 exec_prefix=${prefix}
-libdir=/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/ffmpeg/binaries/x86
-includedir=/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/ffmpeg/include/x86
+libdir=/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/ffmpeg/binaries/arm64-v8a
+includedir=/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/ffmpeg/include/arm64-v8a
 
 Name: libavformat
 Description: FFmpeg container format library
@@ -10,5 +10,5 @@ Requires:
 Requires.private: libavcodec >= 57.89.100, libswresample >= 2.7.100, libavutil >= 55.58.100
 Conflicts:
 Libs: -L${libdir}  -lavformat 
-Libs.private: -lssl -lcrypto -ldl -lm -lz -pthread -lgcc
+Libs.private: -ldl -lm -lz -pthread -lgcc
 Cflags: -I${includedir}

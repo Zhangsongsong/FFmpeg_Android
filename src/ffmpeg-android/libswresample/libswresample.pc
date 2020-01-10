@@ -1,7 +1,7 @@
 prefix=/usr/local
 exec_prefix=${prefix}
-libdir=/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/ffmpeg/binaries/x86
-includedir=/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/ffmpeg/include/x86
+libdir=/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/ffmpeg/binaries/arm64-v8a
+includedir=/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/ffmpeg/include/arm64-v8a
 
 Name: libswresample
 Description: FFmpeg audio resampling library

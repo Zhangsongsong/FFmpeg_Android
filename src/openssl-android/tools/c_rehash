@@ -3,8 +3,8 @@
 # Perl c_rehash script, scan all files in a directory
 # and add symbolic links to their hash values.
 
-my $dir = "/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/openssl/build/x86";
-my $prefix = "/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/openssl/build/x86";
+my $dir = "/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/openssl/build/armeabi-v7a";
+my $prefix = "/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/openssl/build/armeabi-v7a";
 
 my $openssl = $ENV{OPENSSL} || "openssl";
 my $pwd;

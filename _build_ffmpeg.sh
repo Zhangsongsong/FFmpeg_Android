@@ -3,7 +3,8 @@
 set -e
 
 # Set your own NDK here
-export NDK=/Users/songzhouzhang/Library/Android/ndk/android-ndk-r14b
+export NDK=/Users/zasko/Zasko/Android/NDK/android-ndk-r14b
+
 
 #export NDK=`grep ndk.dir $PROPS | cut -d'=' -f2`
 

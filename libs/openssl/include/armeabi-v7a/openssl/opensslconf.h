@@ -139,8 +139,8 @@ extern "C" {
 
 #if !(defined(VMS) || defined(__VMS)) /* VMS uses logical names instead */
 #if defined(HEADER_CRYPTLIB_H) && !defined(OPENSSLDIR)
-#define ENGINESDIR "/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/openssl/build/armeabi-v7a/lib/engines"
-#define OPENSSLDIR "/Users/songzhouzhang/Zasko/CMD/FFmpeg-android/libs/openssl/build/armeabi-v7a"
+#define ENGINESDIR "/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/openssl/build/armeabi-v7a/lib/engines"
+#define OPENSSLDIR "/Users/zasko/Zasko/Github/ZaskoFFmpeg/libs/openssl/build/armeabi-v7a"
 #endif
 #endif
 

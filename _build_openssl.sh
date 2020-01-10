@@ -4,7 +4,7 @@
 
 export WORKING_DIR=`pwd`
 
-export NDK=/Users/songzhouzhang/Library/Android/ndk/android-ndk-r14b
+export NDK=/Users/zasko/Zasko/Android/NDK/android-ndk-r14b
 
 export ANDROID_NDK_ROOT=$NDK
 
@@ -100,6 +100,9 @@ then
 elif [ $TARGET == "x86_64" ]
 then
     ./Configure darwin-x86_64 shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
+elif [ $TARGET == "arm64-v8a"]
+then
+    ./Configure android64-aarch64 shared no-ssl2 no-ssl3 no-comp no-hw no-engine  --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 else
     ./config shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 fi
@@ -176,6 +179,7 @@ if [ $TARGET == 'x86_64' ]; then
 fi
 
 if [ $TARGET == 'arm64-v8a' ]; then
+  echo "switch arm64-v8a."
   ABI=arm64-v8a
   CPU=arm64-v8a
   ARCH=arm64
