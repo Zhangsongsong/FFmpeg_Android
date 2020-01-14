@@ -30,7 +30,7 @@ X86_64_PREBUILT=$NDK/toolchains/x86_64-4.9/prebuilt/darwin-x86_64
 MIPS_PLATFORM=$NDK/platforms/android-19/arch-mips/
 MIPS_PREBUILT=$NDK/toolchains/mipsel-linux-android-4.9/prebuilt/darwin-x86_64
 
-FFMPEG_VERSION="3.3.6"
+FFMPEG_VERSION="4.0.5"
 
 TOP_ROOT=$PWD
 SOURCE=${TOP_ROOT}/src
@@ -52,6 +52,7 @@ if [ ! -e "ffmpeg-${FFMPEG_VERSION}.tar.bz2" ]; then
 else
     echo "Using ffmpeg-${FFMPEG_VERSION}.tar.bz2"
 fi
+
 
 #for i in `find diffs -type f`; do
 #    (cd ffmpeg-${FFMPEG_VERSION} && patch -p1 < ../$i)
@@ -92,6 +93,7 @@ SSL_EXTRA_CFLAGS="-I$OPENSSL_INCLUDE_DIR"
 
 echo $SSL_EXTRA_LDFLAGS
 echo $SSL_EXTRA_CFLAGS
+echo $OPENSSL_DIR
 
 if [ $ARCH == "arm" ]
 then
@@ -159,7 +161,6 @@ BINARIES_DIR=$BUILD_DIR/binaries/$ABI
     --disable-ffplay \
     --disable-ffmpeg \
     --disable-ffprobe \
-    --disable-ffserver \
     --disable-doc \
     --disable-symver \
     --disable-postproc \

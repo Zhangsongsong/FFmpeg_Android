@@ -4,7 +4,9 @@
 
 export WORKING_DIR=`pwd`
 
-export NDK=/Users/zasko/Zasko/Android/NDK/android-ndk-r14b
+# /Users/zasko/Library/Android/sdk/ndk/20.1.5948944
+# /Users/zasko/Zasko/Android/NDK/android-ndk-r14b
+export NDK=/Users/zasko/Zasko/Android/NDK/android-ndk-r15c
 
 export ANDROID_NDK_ROOT=$NDK
 
@@ -31,7 +33,8 @@ X86_64_PREBUILT=$NDK/toolchains/x86_64-4.9/prebuilt/darwin-x86_64
 MIPS_PLATFORM=$NDK/platforms/android-9/arch-mips/
 MIPS_PREBUILT=$NDK/toolchains/mipsel-linux-android-4.9/prebuilt/darwin-x86_64
 
-OPENSSL_VERSION="1.0.2k" #1.0.2j #"1.1.0c"
+# 1.1.1d ; 1.0.2k
+OPENSSL_VERSION="1.1.1d" #1.0.2j #"1.1.0c"
 
 TOP_ROOT=`pwd`
 BUILD_DIR=${TOP_ROOT}/libs/openssl
@@ -67,9 +70,10 @@ then
 #added by alexvas
 elif [ $ARCH == "arm64" ]
 then
-    PLATFORM=$ARM64_PLATFORM
-    PREBUILT=$ARM64_PREBUILT
-    HOST=aarch64-linux-android
+    echo ""
+    # PLATFORM=$ARM64_PLATFORM
+    # PREBUILT=$ARM64_PREBUILT
+    # HOST=aarch64-linux-android
 elif [ $ARCH == "mips" ]
 then
     PLATFORM=$MIPS_PLATFORM
@@ -90,9 +94,18 @@ fi
 INSTALL_DIR=$BUILD_DIR/build/$ABI
 mkdir -p ${INSTALL_DIR}
 
-cd $TOP_ROOT
-. ./Setenv-android.sh $NDK $ANDROID_EABI $ANDROID_ARCH
-cd $SOURCE_OPENSSL
+if [ $TARGET == "arm64-v8a" ]
+then
+  cd $TOP_ROOT
+  cd $SOURCE_OPENSSL
+else
+  cd $TOP_ROOT
+  . ./Setenv-android.sh $NDK $ANDROID_EABI $ANDROID_ARCH
+  cd $SOURCE_OPENSSL
+
+fi
+
+
 
 if [ $TARGET == "mips" ]
 then
@@ -100,24 +113,81 @@ then
 elif [ $TARGET == "x86_64" ]
 then
     ./Configure darwin-x86_64 shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
-elif [ $TARGET == "arm64-v8a"]
+elif [ $TARGET == "arm64-v8a" ]
 then
-    ./Configure android64-aarch64 shared no-ssl2 no-ssl3 no-comp no-hw no-engine  --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
+    echo ""
+    # ./Configure shared android-${ARCH} -D__ANDROID_API__=21  --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 else
     ./config shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 fi
 
-make clean
-make depend
-make CALC_VERSIONS="SHLIB_COMPAT=; SHLIB_SOVER=" MAKE="make -e" all
 
-echo $ANDROID_TOOLCHAIN
-echo $PREBUILT/bin
+if [ $TARGET == "arm64-v8a" ]  
+then
+  export ANDROID_NDK_HOME=/Users/zasko/Zasko/Android/NDK/android-ndk-r15c 
+  rm -fr static
+  mkdir -p static/lib
+  mkdir -p static/include
+  mkdir -p $INSTALL_DIR/lib
 
-mkdir -p $INSTALL_DIR/lib
-echo "place-holder make target for avoiding symlinks" >> $INSTALL_DIR/lib/link-shared
-make SHLIB_EXT=.so install_sw
-#make install CC=$PREBUILT/bin/$HOST-gcc RANLIB=$PREBUILT/bin/$HOST-ranlib
+  rm -fr $ARCH
+  mkdir $ARCH
+  rm -fr openssl-$OPENSSL_VERSION
+  tar -xvf openssl-$OPENSSL_VERSION.tar.gz
+  cd openssl-$OPENSSL_VERSION
+
+
+  ANDROID_API=21
+  case $ARCH in
+        arm)
+            ANDROID_API=16
+            ;;
+        x86)
+            ANDROID_API=16
+            ;;
+        arm64)
+            ANDROID_API=21
+            ;;
+        x86_64)
+            ANDROID_API=21
+            ;;
+  esac
+  ANDROID_TOOLCHAIN=""
+  for tmp in "linux-x86_64" "linux-x86" "darwin-x86_64" "darwin-x86"
+  do
+      if [ -d "$NDK/toolchains/llvm/prebuilt/$tmp/bin" ]; then
+          ANDROID_TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/$tmp/bin"
+          break
+      fi
+  done
+  export PATH="$ANDROID_TOOLCHAIN":"$PATH"
+  echo $PATH
+  ./Configure shared android-arm64 -D__ANDROID_API__=${ANDROID_API} --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
+  make depend
+  make -j$(nproc) SHLIB_VERSION_NUMBER= SHLIB_EXT=.so
+  llvm-strip -strip-all libcrypto.so
+  llvm-strip -strip-all libssl.so
+  cp libcrypto.so ../$ARCH
+  cp libssl.so ../$ARCH
+  mv libcrypto.a ../static/lib/libcrypto.a
+  mv libssl.a ../static/lib/libssl.a
+
+
+# rm -fr openssl-$VERSION
+else
+  make clean
+  make depend
+  make CALC_VERSIONS="SHLIB_COMPAT=; SHLIB_SOVER=" MAKE="make -e" all
+
+  echo $ANDROID_TOOLCHAIN
+  echo $PREBUILT/bin
+
+  mkdir -p $INSTALL_DIR/lib
+  echo "place-holder make target for avoiding symlinks" >> $INSTALL_DIR/lib/link-shared
+  make SHLIB_EXT=.so install_sw
+  #make install CC=$PREBUILT/bin/$HOST-gcc RANLIB=$PREBUILT/bin/$HOST-ranlib
+fi
+
 
 # copy the binaries
 OPENSSL_LIB_DIR=$BUILD_DIR/lib/$ABI
@@ -179,7 +249,6 @@ if [ $TARGET == 'x86_64' ]; then
 fi
 
 if [ $TARGET == 'arm64-v8a' ]; then
-  echo "switch arm64-v8a."
   ABI=arm64-v8a
   CPU=arm64-v8a
   ARCH=arm64
