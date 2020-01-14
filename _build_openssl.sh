@@ -115,78 +115,34 @@ then
     ./Configure darwin-x86_64 shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 elif [ $TARGET == "arm64-v8a" ]
 then
-    echo ""
-    # ./Configure shared android-${ARCH} -D__ANDROID_API__=21  --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
+    export ANDROID_NDK_HOME=/Users/zasko/Zasko/Android/NDK/android-ndk-r15c
+    ANDROID_TOOLCHAIN=""
+    for host in "linux-x86_64" "linux-x86" "darwin-x86_64" "darwin-x86"
+    do
+       if [ -d "$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$host/bin" ]; then
+            ANDROID_TOOLCHAIN="$ANDROID_NDK_HOME/toolchains/llvm/prebuilt/$host/bin"
+            break
+        fi
+    done
+    export PATH="$ANDROID_TOOLCHAIN":"$PATH"
+    ./Configure shared android-${ARCH} -D__ANDROID_API__=21  --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 else
     ./config shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 fi
 
 
-if [ $TARGET == "arm64-v8a" ]  
-then
-  export ANDROID_NDK_HOME=/Users/zasko/Zasko/Android/NDK/android-ndk-r15c 
-  rm -fr static
-  mkdir -p static/lib
-  mkdir -p static/include
-  mkdir -p $INSTALL_DIR/lib
+make clean
+make depend
+make CALC_VERSIONS="SHLIB_COMPAT=; SHLIB_SOVER=" MAKE="make -e" all
 
-  rm -fr $ARCH
-  mkdir $ARCH
-  rm -fr openssl-$OPENSSL_VERSION
-  tar -xvf openssl-$OPENSSL_VERSION.tar.gz
-  cd openssl-$OPENSSL_VERSION
+echo $ANDROID_TOOLCHAIN
+echo $PREBUILT/bin
 
+mkdir -p $INSTALL_DIR/lib
+echo "place-holder make target for avoiding symlinks" >> $INSTALL_DIR/lib/link-shared
+make SHLIB_EXT=.so install_sw
+#make install CC=$PREBUILT/bin/$HOST-gcc RANLIB=$PREBUILT/bin/$HOST-ranlib
 
-  ANDROID_API=21
-  case $ARCH in
-        arm)
-            ANDROID_API=16
-            ;;
-        x86)
-            ANDROID_API=16
-            ;;
-        arm64)
-            ANDROID_API=21
-            ;;
-        x86_64)
-            ANDROID_API=21
-            ;;
-  esac
-  ANDROID_TOOLCHAIN=""
-  for tmp in "linux-x86_64" "linux-x86" "darwin-x86_64" "darwin-x86"
-  do
-      if [ -d "$NDK/toolchains/llvm/prebuilt/$tmp/bin" ]; then
-          ANDROID_TOOLCHAIN="$NDK/toolchains/llvm/prebuilt/$tmp/bin"
-          break
-      fi
-  done
-  export PATH="$ANDROID_TOOLCHAIN":"$PATH"
-  echo $PATH
-  ./Configure shared android-arm64 -D__ANDROID_API__=${ANDROID_API} --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
-  make depend
-  make -j$(nproc) SHLIB_VERSION_NUMBER= SHLIB_EXT=.so
-  llvm-strip -strip-all libcrypto.so
-  llvm-strip -strip-all libssl.so
-  cp libcrypto.so ../$ARCH
-  cp libssl.so ../$ARCH
-  mv libcrypto.a ../static/lib/libcrypto.a
-  mv libssl.a ../static/lib/libssl.a
-
-
-# rm -fr openssl-$VERSION
-else
-  make clean
-  make depend
-  make CALC_VERSIONS="SHLIB_COMPAT=; SHLIB_SOVER=" MAKE="make -e" all
-
-  echo $ANDROID_TOOLCHAIN
-  echo $PREBUILT/bin
-
-  mkdir -p $INSTALL_DIR/lib
-  echo "place-holder make target for avoiding symlinks" >> $INSTALL_DIR/lib/link-shared
-  make SHLIB_EXT=.so install_sw
-  #make install CC=$PREBUILT/bin/$HOST-gcc RANLIB=$PREBUILT/bin/$HOST-ranlib
-fi
 
 
 # copy the binaries
