@@ -3,7 +3,7 @@
 set -e
 
 # Set your own NDK here
-export NDK=/Users/zasko/Zasko/Android/NDK/android-ndk-r14b
+export NDK=/Users/zasko/Zasko/Android/NDK/android-ndk-r15c
 
 
 #export NDK=`grep ndk.dir $PROPS | cut -d'=' -f2`
@@ -140,9 +140,22 @@ openssl_addi_ldflags=""
 #    --extra-ldflags="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog" \
 
 # TODO Adding aac decoder brings "libnative.so has text relocations. This is wasting memory and prevents security hardening. Please fix." message in Android.
-
 INCLUDE_DIR=$BUILD_DIR/include/$ABI
 BINARIES_DIR=$BUILD_DIR/binaries/$ABI
+
+# If you enable openssl for arm64, you should add openssl pkgconfig in ./configure.
+# First, export you openssl pkgconfig, and then add -pkg-config=pkg-config in ./configure.
+# Laster version 1.1.0, OPENSSL_init_ssl replace SSL_library_init. Also, you can find configure for ffmpeg and add "check_lib openssl openssl/ssl.h OPENSSL_init_ssl -lssl -lcrypto ||" to "enable openssl", it is not suggest.
+
+# For this, has enable openssl.
+OPEN_SSL_PKG_PATH="$OPENSSL_DIR/build/$ABI/lib/pkgconfig"
+if [ -d "$OPEN_SSL_PKG_PATH" ] && [ "$ARCH" == "arm64" ]; then
+    export PATH="$OPEN_SSL_PKG_PATH":"$PATH"
+fi
+
+echo "zasko:${TOP_ROOT}/x264/x264/android/$ARCH/lib"
+
+# exit 
 
 ./configure \
     --target-os=android \
@@ -156,20 +169,24 @@ BINARIES_DIR=$BUILD_DIR/binaries/$ABI
     --nm=$PREBUILT/bin/$HOST-nm \
     --sysroot=$PLATFORM \
     --extra-cflags="$OPTIMIZE_CFLAGS $SSL_EXTRA_CFLAGS" \
+    --extra-cflags="-I${TOP_ROOT}/x264/x264/android/$ARCH/include" \
+    --extra-ldflags="-L${TOP_ROOT}/x264/x264/android/$ARCH/lib"    \
     --extra-ldflags="-Wl,-rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib -nostdlib -lc -lm -ldl -llog -lz $SSL_EXTRA_LDFLAGS -DOPENSSL_API_COMPAT=0x00908000L" \
     --disable-static \
-    --disable-ffplay \
-    --disable-ffmpeg \
+    --enable-ffplay \
+    --enable-ffmpeg \
     --disable-ffprobe \
     --disable-doc \
     --disable-symver \
-    --disable-postproc \
+    --enable-postproc \
+    --enable-avresample \
     --disable-bsfs \
     --disable-indevs \
     --disable-outdevs \
     --disable-devices \
     --disable-asm \
     --enable-jni \
+    --enable-gpl \
     --enable-mediacodec \
     --enable-hwaccel=h264_mediacodec \
     --enable-decoder=h264_mediacodec \
@@ -187,7 +204,10 @@ BINARIES_DIR=$BUILD_DIR/binaries/$ABI
     --enable-muxer=mov \
     --enable-muxer=jpeg \
     --enable-parser=h264 \
-    --enable-openssl \
+    --enable-libx264 \
+    --enable-encoder=enable-libx264 \
+    --disable-openssl \
+    --enable-network \
     --enable-protocol=file,ftp,http,https,httpproxy,hls,mmsh,mmst,pipe,rtmp,rtmps,rtmpt,rtmpts,rtp,sctp,srtp,tcp,udp \
     $ADDITIONAL_CONFIGURE_FLAG || die "Couldn't configure ffmpeg!"
 
@@ -195,7 +215,7 @@ make clean
 make -j8 install V=1
 $PREBUILT/bin/$HOST-ar d libavcodec/libavcodec.a inverse.o
 
-#$PREBUILT/bin/$HOST-ld -rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -soname libffmpeg.so -shared -nostdlib  -z,noexecstack -Bsymbolic --whole-archive --no-undefined -o $PREFIX/libffmpeg.so libavcodec/libavcodec.a libavformat/libavformat.a libavutil/libavutil.a libswscale/libswscale.a -lc -lm -lz -ldl -llog  --warn-once  --dynamic-linker=/system/bin/linker $PREBUILT/lib/gcc/$HOST/4.6/libgcc.a
+$PREBUILT/bin/$HOST-ld -rpath-link=$PLATFORM/usr/lib -L$PLATFORM/usr/lib  -soname libffmpeg.so -shared -nostdlib  -z,noexecstack -Bsymbolic --whole-archive --no-undefined -o $PREFIX/libffmpeg.so libavcodec/libavcodec.a libavformat/libavformat.a libavutil/libavutil.a libswscale/libswscale.a -lc -lm -lz -ldl -llog  --warn-once  --dynamic-linker=/system/bin/linker $PREBUILT/lib/gcc/$HOST/4.6/libgcc.a
 popd
 
 # copy the binaries
@@ -229,6 +249,8 @@ cp -r $BINARIES_DIR/libswscale* 	${LIBSWSCALE_DIR}/.
 #rsync -a --include '*/ssltest' --exclude '*.so' ${src_root}/openssl-android/libs/ ${dist_bin_root}/
 # copy the headers
 #cp -r ${src_root}/openssl-android/include/* ${dist_include_root}/.
+# 打包
+
 }
 
 ######################################################

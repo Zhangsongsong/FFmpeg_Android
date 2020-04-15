@@ -112,7 +112,7 @@ then
     ./Configure android-mips shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
 elif [ $TARGET == "x86_64" ]
 then
-    ./Configure darwin-x86_64 shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR
+    ./Configure darwin-x86_64 shared no-ssl2 no-ssl3 no-comp no-hw no-engine --openssldir=$INSTALL_DIR --prefix=$INSTALL_DIR 
 elif [ $TARGET == "arm64-v8a" ]
 then
     export ANDROID_NDK_HOME=/Users/zasko/Zasko/Android/NDK/android-ndk-r15c
